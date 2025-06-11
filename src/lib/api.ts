@@ -1,3 +1,4 @@
+import { fixMediaUrls } from "@/utils/replaceMediaUrl";
 import axios, { AxiosInstance } from "axios";
 import {
   PageNavigation,
@@ -54,7 +55,19 @@ export const fetchContents = async (slug: string): Promise<ContentList[]> => {
 export const fetchContent = async (contentId: number): Promise<Content> => {
   try {
     const response = await api.get(`contents/${contentId}/`);
-    return response.data;
+    const data = response.data;
+
+    const mediaUrl =
+      process.env.NEXT_PUBLIC_MEDIA_URL || "http://localhost:8000";
+
+    if (data.texts) {
+      data.texts = data.texts.map((t: any) => ({
+        ...t,
+        text: fixMediaUrls(t.text),
+      }));
+    }
+
+    return data;
   } catch (error) {
     console.error("Error fetching content:", error);
     throw error;
@@ -81,7 +94,6 @@ export const fetchCarouselContent = async (): Promise<Content[]> => {
   }
 };
 
-
 export const fetchVideos = async (): Promise<Video[]> => {
   try {
     const response = await api.get<PaginatedResponse<Video>>("videos/");
@@ -90,4 +102,4 @@ export const fetchVideos = async (): Promise<Video[]> => {
     console.error("Error fetching videos:", error);
     return [];
   }
-}
+};

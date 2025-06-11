@@ -8,6 +8,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useMemo } from "react";
 import DOMPurify from "dompurify";
+import { fixMediaUrls } from "@/utils/replaceMediaUrl";
 
 type OrderedBlock =
   | (ContentText & { type: "text" })
@@ -84,7 +85,9 @@ export default function ContentDetailPage() {
             <div
               key={`text-${item.id}`}
               className="prose prose-lg max-w-none text-gray-800"
-              dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(item.text) }}
+              dangerouslySetInnerHTML={{
+                __html: DOMPurify.sanitize(fixMediaUrls(item.text)),
+              }}
             />
           );
         } else {
@@ -105,7 +108,9 @@ export default function ContentDetailPage() {
               {item.text && (
                 <div
                   className="prose prose-lg max-w-none text-gray-800"
-                  dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(item.text) }}
+                  dangerouslySetInnerHTML={{
+                    __html: DOMPurify.sanitize(fixMediaUrls(item.text)),
+                  }}
                 />
               )}
             </div>
