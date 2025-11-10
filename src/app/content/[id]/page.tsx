@@ -95,7 +95,7 @@ export default function ContentDetailPage() {
     url.startsWith("/media") ? `${MEDIA_BASE}${url}` : url;
 
   return (
-    <div className="max-w-4xl mx-auto my-8 sm:my-12 px-4 sm:px-6 relative z-40">
+    <div className="max-w-6xl mx-auto my-8 sm:my-12 px-2 sm:px-4 lg:px-6 relative z-40">
       {/* Card container */}
       <div className="bg-white text-black border border-[rgb(47,58,154)] rounded-xl shadow-md overflow-hidden overflow-x-hidden">
         {/* Banner image (hero) with overlay content */}
@@ -106,15 +106,15 @@ export default function ContentDetailPage() {
               alt={bannerBlock.text || "Banner image"}
               fill
               className="object-cover"
-              sizes="(max-width: 640px) 100vw, (max-width: 1024px) 80vw, 720px"
+              sizes="(max-width: 640px) 100vw, (max-width: 1024px) 80vw, 960px"
             />
             {/* Dark gradient for readability */}
             <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
 
             {/* Title + tags + description on top of banner */}
-            <div className="absolute inset-x-0 bottom-0 p-4 sm:p-6 space-y-2">
+            <div className="absolute inset-x-0 bottom-0 p-4 sm:p-6 lg:p-8 space-y-2">
               <div className="flex flex-wrap items-center justify-between gap-2">
-                <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-white drop-shadow-md break-words">
+                <h1 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold text-white drop-shadow-md break-words">
                   {content.title}
                 </h1>
 
@@ -132,7 +132,7 @@ export default function ContentDetailPage() {
               </div>
 
               {content.description && (
-                <p className="text-xs sm:text-sm text-white/90 max-w-3xl break-words">
+                <p className="text-xs sm:text-sm lg:text-base text-white/90 max-w-4xl break-words">
                   {content.description}
                 </p>
               )}
@@ -141,7 +141,7 @@ export default function ContentDetailPage() {
         )}
 
         {/* Body content with padding */}
-        <div className="px-4 sm:px-6 py-6 sm:py-8 space-y-6 sm:space-y-8">
+        <div className="px-4 sm:px-6 lg:px-10 py-6 sm:py-8 lg:py-10 space-y-6 sm:space-y-8">
           {blocks.map((item) => {
             if (item.type === "text") {
               return (
@@ -160,7 +160,7 @@ export default function ContentDetailPage() {
               return (
                 <div
                   key={`img-${item.id}`}
-                  className="flex flex-col md:flex-row gap-4 md:items-start"
+                  className="flex flex-col md:flex-row gap-4 md:gap-6 md:items-start"
                 >
                   <div className="relative w-full md:w-1/2 lg:w-5/12 h-56 sm:h-64 md:h-72 rounded-lg overflow-hidden border border-[rgb(47,58,154)] shrink-0">
                     <Image
@@ -168,7 +168,7 @@ export default function ContentDetailPage() {
                       alt={item.text || "Content image"}
                       fill
                       className="object-cover"
-                      sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 360px"
+                      sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 480px"
                     />
                   </div>
 
