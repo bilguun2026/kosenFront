@@ -4,11 +4,12 @@ import { useRouter } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
 import { useContentsByTag, useTags, useTagSlug } from "@/hooks/useContents";
+import DOMPurify from "dompurify";
+import { fixMediaUrls } from "@/utils/replaceMediaUrl";
 
 export default function ContentsClient() {
   const router = useRouter();
   const slug = useTagSlug();
-  
 
   const { data: tags = [], isLoading: loadingTags } = useTags();
   const { data: contents = [], isLoading: loadingContents } =
@@ -17,6 +18,9 @@ export default function ContentsClient() {
   if (loadingTags || loadingContents) {
     return <p className="text-center text-gray-400">Уншиж байна...</p>;
   }
+
+  const MEDIA_BASE =
+    process.env.NEXT_PUBLIC_MEDIA_URL ?? "http://127.0.0.1:8000";
 
   return (
     <div className="max-w-6xl mx-auto px-4 py-10 bg-white text-black relative z-40 h-screen">
@@ -45,46 +49,60 @@ export default function ContentsClient() {
             Хоосон байна. Энэ тагт мэдээлэл алга.
           </p>
         ) : (
-          contents.map((content) => (
-            <Link
-              href={`/content/${content.id}`}
-              key={content.id}
-              className="group block rounded-2xl overflow-hidden border border-[rgb(47,58,154)] bg-white shadow-md transition-transform hover:-translate-y-1 hover:shadow-xl"
-            >
-              <div className="relative w-full h-40 overflow-hidden">
-                <Image
-                  src={
-                    content.image?.image_url?.startsWith("/media")
-                      ? `http://localhost:8000/${content.image.image_url}`
-                      : content.image?.image_url || "/images/koocen.png"
-                  }
-                  alt={content.title}
-                  fill
-                  className="object-cover group-hover:scale-105 transition-transform duration-300"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
-              </div>
+          contents.map((content) => {
+            const imgSrc =
+              content.image?.image_url &&
+              content.image.image_url.startsWith("/media")
+                ? `${MEDIA_BASE}${content.image.image_url}`
+                : content.image?.image_url || "/images/koocen.png";
 
-              <div className="p-4 space-y-2">
-                <h2 className="text-lg font-semibold text-black line-clamp-2">
-                  {content.title}
-                </h2>
-                <p className="text-sm text-gray-700 line-clamp-2">
-                  {content.description}
-                </p>
-                <div className="flex justify-between items-center pt-2">
-                  <span className="text-xs text-gray-500">
-                    {content.created_at}
-                  </span>
-                  {content.tags?.[0] && (
-                    <span className="text-xs font-medium text-[rgb(255,194,13)] bg-[rgb(47,58,154)] px-2 py-1 rounded-full">
-                      {content.tags[0].name}
-                    </span>
-                  )}
+            return (
+              <Link
+                href={`/content/${content.id}`}
+                key={content.id}
+                className="group block rounded-2xl overflow-hidden border border-[rgb(47,58,154)] bg-white shadow-md transition-transform hover:-translate-y-1 hover:shadow-xl"
+              >
+                <div className="relative w-full h-40 overflow-hidden">
+                  <Image
+                    src={imgSrc}
+                    alt={content.title}
+                    fill
+                    className="object-cover group-hover:scale-105 transition-transform duration-300"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
                 </div>
-              </div>
-            </Link>
-          ))
+
+                <div className="p-4 space-y-2">
+                  <h2 className="text-lg font-semibold text-black line-clamp-2">
+                    {content.title}
+                  </h2>
+
+                  {/* CKEditor HTML description – тоотой/цэгтэй жагсаалт хадгална */}
+                  {content.description && (
+                    <div
+                      className="text-sm text-gray-700 rich-content line-clamp-3"
+                      dangerouslySetInnerHTML={{
+                        __html: DOMPurify.sanitize(
+                          fixMediaUrls(content.description)
+                        ),
+                      }}
+                    />
+                  )}
+
+                  <div className="flex justify-between items-center pt-2">
+                    <span className="text-xs text-gray-500">
+                      {content.created_at}
+                    </span>
+                    {content.tags?.[0] && (
+                      <span className="text-xs font-medium text-[rgb(255,194,13)] bg-[rgb(47,58,154)] px-2 py-1 rounded-full">
+                        {content.tags[0].name}
+                      </span>
+                    )}
+                  </div>
+                </div>
+              </Link>
+            );
+          })
         )}
       </div>
     </div>
