@@ -7,6 +7,7 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 import Image from "next/image";
 import DOMPurify from "dompurify";
+import { fixMediaUrls } from "@/utils/replaceMediaUrl";
 
 interface PageDetailProps {
   pageId: string;
@@ -42,9 +43,12 @@ export default function PageDetail({ pageId }: PageDetailProps) {
     );
   }
 
-  // Sanitize HTML content to prevent XSS attacks
+  const MEDIA_BASE =
+    process.env.NEXT_PUBLIC_MEDIA_URL ?? "http://127.0.0.1:8000";
+
+  // HTML-ээ аюулгүй болгох helper
   const sanitizeHTML = (html: string) => {
-    return DOMPurify.sanitize(html, {
+    return DOMPurify.sanitize(fixMediaUrls(html), {
       USE_PROFILES: { html: true },
       ALLOWED_TAGS: [
         "p",
@@ -74,6 +78,8 @@ export default function PageDetail({ pageId }: PageDetailProps) {
         "tbody",
         "thead",
         "tfoot",
+        "blockquote",
+        "code",
       ],
       ALLOWED_ATTR: ["href", "src", "alt", "class", "style"],
     });
@@ -104,18 +110,17 @@ export default function PageDetail({ pageId }: PageDetailProps) {
                   type: "text" as const,
                   data: txt,
                 })),
-              ];
-              items.sort((a, b) => a.data.order - b.data.order);
+              ].sort((a, b) => a.data.order - b.data.order);
 
               return (
                 <section
                   key={content.id}
                   className="border-b border-[rgb(255,194,13)] last:border-none pb-10 last:pb-0"
                 >
-                  <div className="flex flex-row justify-between">
+                  <div className="flex flex-row justify-between gap-4">
                     <h2 className="text-2xl font-semibold">{content.title}</h2>
                     {content.tags.length > 0 && (
-                      <div className="mt-4 flex flex-wrap gap-2">
+                      <div className="mt-1 flex flex-wrap gap-2">
                         {content.tags.map((tag) => (
                           <Link
                             key={tag.id}
@@ -128,15 +133,22 @@ export default function PageDetail({ pageId }: PageDetailProps) {
                       </div>
                     )}
                   </div>
+
                   <div className="mt-6 space-y-6">
                     {items.map((item) => {
                       if (item.type === "image") {
                         const image = item.data;
+                        const imageUrl = image.image_url
+                          ? image.image_url.startsWith("/media")
+                            ? `${MEDIA_BASE}${image.image_url}`
+                            : image.image_url
+                          : undefined;
+
                         return (
                           <div key={`image-${image.id}`} className="mt-6">
-                            {image.image_url ? (
+                            {imageUrl ? (
                               <Image
-                                src={image.image}
+                                src={imageUrl}
                                 alt={image.text || content.title}
                                 width={672}
                                 height={378}
@@ -156,17 +168,18 @@ export default function PageDetail({ pageId }: PageDetailProps) {
                             )}
                           </div>
                         );
-                      } else {
-                        return (
-                          <div
-                            key={`text-${item.data.id}`}
-                            className="prose max-w-none"
-                            dangerouslySetInnerHTML={{
-                              __html: DOMPurify.sanitize(item.data.text),
-                            }}
-                          />
-                        );
                       }
+
+                      // TEXT BLOCK – CKEditor HTML (жагсаалт, код, ишлэл г.м)
+                      return (
+                        <div
+                          key={`text-${item.data.id}`}
+                          className="prose max-w-none rich-content"
+                          dangerouslySetInnerHTML={{
+                            __html: sanitizeHTML(item.data.text),
+                          }}
+                        />
+                      );
                     })}
                   </div>
                 </section>

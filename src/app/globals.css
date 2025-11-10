@@ -57,8 +57,13 @@ body {
   @apply rounded;
 }
 
-/* ===== CKEditor-с ирсэн текстийн жагсаалтууд ===== */
+/* CKEditor-с ирсэн агуулга */
+.rich-content {
+  font-size: 1rem;
+  line-height: 1.6;
+}
 
+/* Тоотой / цэгтэй жагсаалт */
 .rich-content ol {
   list-style: decimal;
   margin-left: 1.5rem;
@@ -75,9 +80,26 @@ body {
   margin-bottom: 0.25rem;
 }
 
-/* Хэрвээ глобал UL reset хэрэгтэй бол зөвхөн nav-д хамааруулна */
-/* nav ul {
-  list-style: none !important;
-  margin: 0 !important;
-  padding: 0 !important;
-} */
+/* CKEditor 5 figure/image alignment-ууд */
+.rich-content figure.image {
+  display: inline-block;
+  margin: 0 1rem 1rem 0; /* зургийн баруун, доогуур бага зай */
+}
+
+/* Зураг зүүн талд байрлалтай бол */
+.rich-content figure.image.image-style-align-left {
+  float: left;
+}
+
+/* (Хэрвээ баруун талд байрлуулдаг бол) */
+.rich-content figure.image.image-style-align-right {
+  float: right;
+  margin: 0 0 1rem 1rem;
+}
+
+/* Float хийсэн зургийн дараах текстүүд wrapper-аасаа гарчихгүйн тулд */
+.rich-content::after {
+  content: "";
+  display: block;
+  clear: both;
+}
