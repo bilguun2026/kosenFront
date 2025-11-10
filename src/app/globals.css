@@ -103,3 +103,11 @@ body {
   display: block;
   clear: both;
 }
+
+.rich-content p,
+.rich-content ul,
+.rich-content ol,
+.rich-content blockquote {
+  margin-top: 0.5rem;
+  margin-bottom: 0.5rem;
+}

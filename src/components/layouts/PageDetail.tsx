@@ -46,9 +46,18 @@ export default function PageDetail({ pageId }: PageDetailProps) {
   const MEDIA_BASE =
     process.env.NEXT_PUBLIC_MEDIA_URL ?? "http://127.0.0.1:8000";
 
-  // HTML-ээ аюулгүй болгох helper
-  const sanitizeHTML = (html: string) => {
-    return DOMPurify.sanitize(fixMediaUrls(html), {
+  // banner-д ашиглах эхний зураг (эхний content-ийн эхний image)
+  const firstContent = page.contents[0];
+  const firstImage = firstContent?.images[0];
+  const bannerUrl =
+    firstImage && firstImage.image_url
+      ? firstImage.image_url.startsWith("/media")
+        ? `${MEDIA_BASE}${firstImage.image_url}`
+        : firstImage.image_url
+      : undefined;
+
+  const sanitizeHTML = (html: string) =>
+    DOMPurify.sanitize(fixMediaUrls(html), {
       USE_PROFILES: { html: true },
       ALLOWED_TAGS: [
         "p",
@@ -83,12 +92,11 @@ export default function PageDetail({ pageId }: PageDetailProps) {
       ],
       ALLOWED_ATTR: ["href", "src", "alt", "class", "style"],
     });
-  };
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 bg-white">
       <motion.div
-        className="rounded-2xl shadow-xl p-10 border relative z-40"
+        className="rounded-2xl shadow-xl p-10 border relative z-40 overflow-hidden"
         style={{
           backgroundColor: "rgb(255,255,255)",
           borderColor: "rgb(47,58,154)",
@@ -98,6 +106,19 @@ export default function PageDetail({ pageId }: PageDetailProps) {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
       >
+        {/* BANNER ЗУРАГ – card-ын дээд, баруун/зүүн талдаа дүүртэл */}
+        {bannerUrl && (
+          <div className="-mx-10 -mt-10 mb-10">
+            <Image
+              src={bannerUrl}
+              alt={firstImage?.text || firstContent?.title || "Banner image"}
+              width={1600}
+              height={500}
+              className="w-full h-56 md:h-80 object-cover rounded-t-2xl"
+            />
+          </div>
+        )}
+
         {page.contents.length > 0 ? (
           <div className="space-y-12">
             {page.contents.map((content) => {
@@ -117,7 +138,7 @@ export default function PageDetail({ pageId }: PageDetailProps) {
                   key={content.id}
                   className="border-b border-[rgb(255,194,13)] last:border-none pb-10 last:pb-0"
                 >
-                  <div className="flex flex-row justify-between gap-4">
+                  <div className="flex flex-row justify-between gap-4 mb-4">
                     <h2 className="text-2xl font-semibold">{content.title}</h2>
                     {content.tags.length > 0 && (
                       <div className="mt-1 flex flex-wrap gap-2">
@@ -134,7 +155,8 @@ export default function PageDetail({ pageId }: PageDetailProps) {
                     )}
                   </div>
 
-                  <div className="mt-6 space-y-6">
+                  {/* зураг / текстүүдийн хооронд зайтай болгохын тулд space-y-8 */}
+                  <div className="mt-4 space-y-8">
                     {items.map((item) => {
                       if (item.type === "image") {
                         const image = item.data;
@@ -145,36 +167,34 @@ export default function PageDetail({ pageId }: PageDetailProps) {
                           : undefined;
 
                         return (
-                          <div key={`image-${image.id}`} className="mt-6">
+                          <div
+                            key={`image-${image.id}`}
+                            className="mt-2 mb-4 flex justify-center"
+                          >
                             {imageUrl ? (
                               <Image
                                 src={imageUrl}
                                 alt={image.text || content.title}
                                 width={672}
                                 height={378}
-                                className="rounded-lg shadow-sm object-cover w-full max-w-3xl mx-auto"
+                                className="rounded-lg shadow-sm object-cover w-full max-w-3xl"
                               />
                             ) : (
-                              <div className="w-full max-w-3xl h-48 bg-gray-200 rounded-lg flex items-center justify-center mx-auto">
+                              <div className="w-full max-w-3xl h-48 bg-gray-200 rounded-lg flex items-center justify-center">
                                 <p className="text-gray-500">
                                   Image not available
                                 </p>
                               </div>
                             )}
-                            {image.text && (
-                              <p className="mt-2 text-sm italic text-center">
-                                {image.text}
-                              </p>
-                            )}
                           </div>
                         );
                       }
 
-                      // TEXT BLOCK – CKEditor HTML (жагсаалт, код, ишлэл г.м)
+                      // TEXT BLOCK – CKEditor HTML
                       return (
                         <div
                           key={`text-${item.data.id}`}
-                          className="prose max-w-none rich-content"
+                          className="rich-content prose max-w-none"
                           dangerouslySetInnerHTML={{
                             __html: sanitizeHTML(item.data.text),
                           }}
