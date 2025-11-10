@@ -44,6 +44,7 @@ body {
 .kosenBg1 {
   @apply bg-[#2f3a9a];
 }
+
 .kosenBg2 {
   @apply bg-[#ffc20c];
 }
@@ -56,8 +57,27 @@ body {
   @apply rounded;
 }
 
-ul {
+/* ===== CKEditor-с ирсэн текстийн жагсаалтууд ===== */
+
+.rich-content ol {
+  list-style: decimal;
+  margin-left: 1.5rem;
+  padding-left: 1.5rem;
+}
+
+.rich-content ul {
+  list-style: disc;
+  margin-left: 1.5rem;
+  padding-left: 1.5rem;
+}
+
+.rich-content li {
+  margin-bottom: 0.25rem;
+}
+
+/* Хэрвээ глобал UL reset хэрэгтэй бол зөвхөн nav-д хамааруулна */
+/* nav ul {
   list-style: none !important;
   margin: 0 !important;
   padding: 0 !important;
-}
+} */

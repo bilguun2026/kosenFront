@@ -58,6 +58,9 @@ export default function ContentDetailPage() {
     );
   }
 
+  const MEDIA_BASE =
+    process.env.NEXT_PUBLIC_MEDIA_URL ?? "http://127.0.0.1:8000";
+
   return (
     <div className="max-w-4xl mx-auto px-6 py-12 bg-white text-black border border-[rgb(47,58,154)] rounded-xl shadow-md my-12 space-y-6 relative z-40">
       <div className="flex flex-row justify-between mb-4">
@@ -84,22 +87,22 @@ export default function ContentDetailPage() {
           return (
             <div
               key={`text-${item.id}`}
-              className="prose prose-lg max-w-none text-gray-800"
+              className="prose prose-lg max-w-none text-gray-800 rich-content"
               dangerouslySetInnerHTML={{
                 __html: DOMPurify.sanitize(fixMediaUrls(item.text)),
               }}
             />
           );
         } else {
+          const imgSrc = item.image_url.startsWith("/media")
+            ? `${MEDIA_BASE}${item.image_url}` // /media-гээ шууд залгаж байгаа тул давхар / гарахгүй
+            : item.image_url;
+
           return (
             <div key={`img-${item.id}`} className="space-y-2">
               <div className="relative w-full h-64 md:h-96 rounded-lg overflow-hidden border border-[rgb(47,58,154)]">
                 <Image
-                  src={
-                    item.image_url.startsWith("/media")
-                      ? `http://localhost:8000/${item.image_url}`
-                      : item.image_url
-                  }
+                  src={imgSrc}
                   alt={item.text || "Content image"}
                   fill
                   className="object-cover"
@@ -107,7 +110,7 @@ export default function ContentDetailPage() {
               </div>
               {item.text && (
                 <div
-                  className="prose prose-lg max-w-none text-gray-800"
+                  className="prose prose-lg max-w-none text-gray-800 rich-content"
                   dangerouslySetInnerHTML={{
                     __html: DOMPurify.sanitize(fixMediaUrls(item.text)),
                   }}
