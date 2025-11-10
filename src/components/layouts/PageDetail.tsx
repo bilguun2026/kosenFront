@@ -46,7 +46,7 @@ export default function PageDetail({ pageId }: PageDetailProps) {
   const MEDIA_BASE =
     process.env.NEXT_PUBLIC_MEDIA_URL ?? "http://127.0.0.1:8000";
 
-  // banner-д ашиглах эхний зураг (эхний content-ийн эхний image)
+  // banner-д ашиглах эхний контент, зураг
   const firstContent = page.contents[0];
   const firstImage = firstContent?.images[0];
   const bannerUrl =
@@ -106,24 +106,45 @@ export default function PageDetail({ pageId }: PageDetailProps) {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
       >
-        {/* BANNER ЗУРАГ – card-ын дээд, баруун/зүүн талдаа дүүртэл */}
+        {/* BANNER ЗУРАГ + ГАРЧИГ / ТАЙЛБАР */}
         {bannerUrl && (
-          <div className="-mx-10 -mt-10 mb-10">
+          <div className="-mx-10 -mt-10 mb-10 relative h-56 md:h-80">
             <Image
               src={bannerUrl}
               alt={firstImage?.text || firstContent?.title || "Banner image"}
-              width={1600}
-              height={500}
-              className="w-full h-56 md:h-80 object-cover rounded-t-2xl"
+              fill
+              className="object-cover"
             />
+            {/* харанхуй градиент давхарга */}
+            <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/40 to-black/10" />
+            {/* гарчиг + тайлбар */}
+            <div className="absolute inset-0 flex flex-col justify-center px-10 md:px-16 lg:px-24 space-y-3">
+              <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold text-white drop-shadow">
+                {firstContent?.title || page.title}
+              </h1>
+              {(firstContent?.description ||
+                page.title ||
+                page.description) && (
+                <p className="max-w-2xl text-sm md:text-base text-gray-100/90 drop-shadow">
+                  {firstContent?.description || page.title || page.description}
+                </p>
+              )}
+            </div>
           </div>
         )}
 
         {page.contents.length > 0 ? (
           <div className="space-y-12">
             {page.contents.map((content) => {
+              const isBannerContent = content.id === firstContent?.id;
+
+              // banner-д ашигласан эхний зургийг доор дахин бүү харуул
+              const imagesForContent = isBannerContent
+                ? content.images.slice(1)
+                : content.images;
+
               const items = [
-                ...content.images.map((img) => ({
+                ...imagesForContent.map((img) => ({
                   type: "image" as const,
                   data: img,
                 })),
@@ -139,7 +160,6 @@ export default function PageDetail({ pageId }: PageDetailProps) {
                   className="border-b border-[rgb(255,194,13)] last:border-none pb-10 last:pb-0"
                 >
                   <div className="flex flex-row justify-between gap-4 mb-4">
-                    <h2 className="text-2xl font-semibold">{content.title}</h2>
                     {content.tags.length > 0 && (
                       <div className="mt-1 flex flex-wrap gap-2">
                         {content.tags.map((tag) => (
@@ -155,7 +175,6 @@ export default function PageDetail({ pageId }: PageDetailProps) {
                     )}
                   </div>
 
-                  {/* зураг / текстүүдийн хооронд зайтай болгохын тулд space-y-8 */}
                   <div className="mt-4 space-y-8">
                     {items.map((item) => {
                       if (item.type === "image") {
@@ -194,7 +213,7 @@ export default function PageDetail({ pageId }: PageDetailProps) {
                       return (
                         <div
                           key={`text-${item.data.id}`}
-                          className="rich-content prose max-w-none"
+                          className="rich-content ck-content max-w-none"
                           dangerouslySetInnerHTML={{
                             __html: sanitizeHTML(item.data.text),
                           }}

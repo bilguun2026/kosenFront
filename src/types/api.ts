@@ -50,6 +50,7 @@ export interface Page {
   id: string;
   title: string;
   subtitle: string;
+  description: string;
   slug: string;
   template: string;
   template_display: string;
@@ -74,7 +75,6 @@ export interface Video {
   video_file?: string;
   video_source?: string;
 }
-
 
 export interface Urls {
   id: number;

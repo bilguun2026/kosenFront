@@ -5,7 +5,7 @@
   --foreground: #171717;
   --kosenBg1: #2f3a9a;
   --kosenBg2: #ffc20c;
-  --kosenText1: #07158f; /* Dark Blue */
+  --kosenText1: #07158f;
   --kosenText2: #ffc20c;
 }
 
@@ -29,6 +29,7 @@ body {
   font-family: Arial, Helvetica, sans-serif;
 }
 
+/* Kosen өнгө, class-ууд */
 .kosenText1 {
   @apply text-[#2f3a9a];
 }
@@ -57,57 +58,102 @@ body {
   @apply rounded;
 }
 
-/* CKEditor-с ирсэн агуулга */
-.rich-content {
+/* ===========================
+   CKEditor-с ирсэн агуулга
+   =========================== */
+
+.ck-content {
   font-size: 1rem;
   line-height: 1.6;
+  word-wrap: break-word;
 }
 
-/* Тоотой / цэгтэй жагсаалт */
-.rich-content ol {
-  list-style: decimal;
-  margin-left: 1.5rem;
-  padding-left: 1.5rem;
+/* Heading-ууд */
+.ck-content h1 {
+  font-size: 2em;
+  margin: 0.67em 0;
 }
 
-.rich-content ul {
-  list-style: disc;
-  margin-left: 1.5rem;
-  padding-left: 1.5rem;
+.ck-content h2 {
+  font-size: 1.5em;
+  margin: 0.75em 0;
 }
 
-.rich-content li {
-  margin-bottom: 0.25rem;
+.ck-content h3 {
+  font-size: 1.17em;
+  margin: 0.83em 0;
 }
 
-/* CKEditor 5 figure/image alignment-ууд */
-.rich-content figure.image {
-  display: inline-block;
-  margin: 0 1rem 1rem 0; /* зургийн баруун, доогуур бага зай */
+/* Paragraph, list, blockquote хоорондын зай */
+.ck-content p,
+.ck-content ul,
+.ck-content ol,
+.ck-content blockquote {
+  margin-top: 0.4rem;
+  margin-bottom: 0.4rem;
 }
 
-/* Зураг зүүн талд байрлалтай бол */
-.rich-content figure.image.image-style-align-left {
+/* 🔥 Жагсаалт – тоо / bullet-ээ дахин идэвхжүүлж байна */
+.ck-content ol {
+  list-style: decimal !important;
+  margin-left: 1.6rem;
+  padding-left: 1.6rem;
+}
+
+.ck-content ul {
+  list-style: disc !important;
+  margin-left: 1.6rem;
+  padding-left: 1.6rem;
+}
+
+/* Зурагтай figure – CKEditor 5 стильтэй ойролцоо */
+.ck-content figure.image {
+  display: table;
+  clear: both;
+  text-align: center;
+  margin: 0.9em auto;
+}
+
+.ck-content figure.image > img {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+
+/* left / right align */
+.ck-content figure.image.image-style-align-left {
   float: left;
+  margin-right: 1.5em;
 }
 
-/* (Хэрвээ баруун талд байрлуулдаг бол) */
-.rich-content figure.image.image-style-align-right {
+.ck-content figure.image.image-style-align-right {
   float: right;
-  margin: 0 0 1rem 1rem;
+  margin-left: 1.5em;
 }
 
-/* Float хийсэн зургийн дараах текстүүд wrapper-аасаа гарчихгүйн тулд */
-.rich-content::after {
+/* Float-тай зурагны дараах текст wrapper-аас гарчихгүйн тулд */
+.ck-content::after {
   content: "";
   display: block;
   clear: both;
 }
 
-.rich-content p,
-.rich-content ul,
-.rich-content ol,
-.rich-content blockquote {
-  margin-top: 0.5rem;
-  margin-bottom: 0.5rem;
+/* -------- TABLE style -------- */
+
+.rich-content table {
+  border-collapse: collapse;
+  border: 1px solid #d0d0d0;
+  margin: 0.75rem 0;
+}
+
+.rich-content th,
+.rich-content td {
+  border: 1px solid #d0d0d0;
+  padding: 0.4rem 0.8rem;
+  text-align: left;
+}
+
+.rich-content th {
+  background-color: #f5f5f5;
+  font-weight: 600;
 }
