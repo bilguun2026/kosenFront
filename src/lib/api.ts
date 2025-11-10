@@ -8,13 +8,13 @@ import {
   Tag,
   ContentList,
   Video,
+  Urls,
 } from "../types/api";
 
 const api: AxiosInstance = axios.create({
   baseURL: process.env.NEXT_PUBLIC_API_URL,
   headers: {
     "Content-Type": "application/json",
-    // Authorization: "Basic " + btoa("admin:bilguunad1026"),
   },
 });
 
@@ -100,6 +100,16 @@ export const fetchVideos = async (): Promise<Video[]> => {
     return response.data.results || [];
   } catch (error) {
     console.error("Error fetching videos:", error);
+    return [];
+  }
+};
+
+export const fetchUrls = async (): Promise<Urls[]> => {
+  try {
+    const response = await api.get<PaginatedResponse<Urls>>("urls/");
+    return response.data.results || [];
+  } catch (error) {
+    console.error("Error fetching urls:", error);
     return [];
   }
 };

@@ -5,15 +5,27 @@ import { motion } from "framer-motion";
 import Image from "next/image";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import useEmblaCarousel from "embla-carousel-react";
-import Fade from "embla-carousel-fade";
 import { useQuery } from "@tanstack/react-query";
 import { fetchCarouselContent } from "@/lib/api";
+const API_BASE_URL = process.env.NEXT_PUBLIC_MEDIA_URL?.replace(/\/$/, "") || "";
+
+function buildImageUrl(path?: string | null): string {
+  if (!path) return "/images/banner.jpg"; // fallback local image
+  if (path.startsWith("http")) return path; // already full URL
+  // If backend returns `/media/...`, prepend API base
+  return `${API_BASE_URL}${path}`;
+}
+interface CarouselImage {
+  id: number;
+  image: string;
+  image_url: string;
+}
 
 interface CarouselContent {
   id: number;
   title: string;
   description: string;
-  images: { id: number; image: string; image_url: string }[];
+  images: CarouselImage[];
 }
 
 const bannerVariants = {
@@ -48,90 +60,69 @@ const dotVariants = {
 };
 
 const Banner = () => {
-  const [emblaRef, emblaApi] = useEmblaCarousel({ loop: true }, [Fade()]);
+  // Proper Embla setup: viewport ref only, no fade plugin
+  const [emblaRef, emblaApi] = useEmblaCarousel({ loop: true });
   const [selectedIndex, setSelectedIndex] = useState(0);
+  const [scrollSnapsCount, setScrollSnapsCount] = useState(0);
 
   const { data, isLoading, error } = useQuery<CarouselContent[]>({
     queryKey: ["carousel-content"],
     queryFn: fetchCarouselContent,
   });
 
-  const slides = (data || []).map((item) => ({
-    image: item.images?.[0]?.image ?? "/images/banner.jpg",
-    content: (
-      <div className="relative w-full h-full">
-        {/* Gradient overlay */}
-        <div className="absolute inset-0 bg-gradient-to-tr from-black/80 via-black/40 to-transparent z-0 rounded-xl" />
-
-        {/* Slide content */}
-        <motion.div
-          className="relative z-10 w-full h-full flex flex-col justify-center items-start px-4 sm:px-6 lg:px-8 py-8 space-y-3"
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, ease: "easeOut" }}
-        >
-          <h1 className="text-xl sm:text-2xl lg:text-4xl font-extrabold text-white drop-shadow-lg leading-tight max-w-[90%] sm:max-w-[80%]">
-            {item.title}
-          </h1>
-
-          {item.description && (
-            <p className="text-xs sm:text-sm lg:text-base text-white font-medium drop-shadow-md max-w-[90%] sm:max-w-[80%] line-clamp-3">
-              {item.description}
-            </p>
-          )}
-
-          <div className="flex gap-3 mt-4">
-            <motion.a
-              href={`/content/${item.id}`}
-              whileHover={{
-                scale: 1.1,
-                backgroundColor: "rgb(60,70,170)",
-                color: "white",
-                boxShadow: "0px 6px 14px rgba(0, 0, 0, 0.3)",
-              }}
-              whileTap={{ scale: 0.95 }}
-              transition={{ type: "spring", stiffness: 300, damping: 18 }}
-              className="inline-block px-6 py-2 bg-[rgb(47,58,154)] text-[rgb(255,194,13)] font-semibold text-sm sm:text-base rounded-lg shadow-md"
-            >
-              Дэлгэрэнгүй
-            </motion.a>
-          </div>
-        </motion.div>
-      </div>
-    ),
-  }));
-
-  const scrollTo = useCallback(
-    (index: number) => {
-      if (emblaApi) emblaApi.scrollTo(index);
-    },
-    [emblaApi]
-  );
-
-  const scrollPrev = useCallback(() => {
-    if (emblaApi) emblaApi.scrollPrev();
-  }, [emblaApi]);
-
-  const scrollNext = useCallback(() => {
-    if (emblaApi) emblaApi.scrollNext();
-  }, [emblaApi]);
+  const slides = data ?? [];
 
   const onSelect = useCallback(() => {
     if (!emblaApi) return;
     setSelectedIndex(emblaApi.selectedScrollSnap());
   }, [emblaApi]);
 
+  const scrollTo = useCallback(
+    (index: number) => {
+      if (!emblaApi) return;
+      emblaApi.scrollTo(index);
+    },
+    [emblaApi]
+  );
+
+  const scrollPrev = useCallback(() => {
+    if (!emblaApi) return;
+    emblaApi.scrollPrev();
+  }, [emblaApi]);
+
+  const scrollNext = useCallback(() => {
+    if (!emblaApi) return;
+    emblaApi.scrollNext();
+  }, [emblaApi]);
+
+  // Set up Embla events + snap count
   useEffect(() => {
     if (!emblaApi) return;
-    emblaApi.on("select", onSelect);
+
+    setScrollSnapsCount(emblaApi.scrollSnapList().length);
     onSelect();
 
+    emblaApi.on("select", onSelect);
+    emblaApi.on("reInit", () => {
+      setScrollSnapsCount(emblaApi.scrollSnapList().length);
+      onSelect();
+    });
+
+    return () => {
+      emblaApi.off("select", onSelect);
+    };
+  }, [emblaApi, onSelect]);
+
+  // Autoplay
+  useEffect(() => {
+    if (!emblaApi) return;
+
     const interval = setInterval(() => {
-      if (emblaApi) emblaApi.scrollNext();
+      emblaApi.scrollNext();
     }, 15000);
 
     return () => clearInterval(interval);
-  }, [emblaApi, onSelect]);
+  }, [emblaApi]);
 
   if (isLoading) {
     return (
@@ -141,7 +132,7 @@ const Banner = () => {
     );
   }
 
-  if (error) {
+  if (error || slides.length === 0) {
     return (
       <div className="text-red-500 text-center py-16 text-lg sm:text-xl">
         Мэдээлэл татаж чадсангүй
@@ -156,40 +147,79 @@ const Banner = () => {
       initial="hidden"
       animate="visible"
     >
+      {/* Embla viewport */}
       <div
         className="w-full max-w-[95%] sm:max-w-4xl lg:max-w-6xl mx-auto relative overflow-hidden rounded-xl"
         ref={emblaRef}
       >
-        <div className="relative h-[250px] sm:h-[350px] lg:h-[450px]">
-          {slides.map((slide, index) => (
-            <div
-              key={index}
-              className={`embla__slide absolute top-0 left-0 w-full h-full ${
-                selectedIndex === index ? "embla__slide--is-selected" : ""
-              }`}
-            >
-              <div className="relative w-full h-full rounded-xl overflow-hidden">
-                <Image
-                  src={slide.image}
-                  alt={`Slide ${index + 1}`}
-                  className="w-full h-full object-cover"
-                  width={1280}
-                  height={600}
-                  sizes="(max-width: 640px) 95vw, (max-width: 1024px) 80vw, 75vw"
-                  priority={index === 0}
-                />
-                <div className="absolute inset-0 bg-black/40" />
-              </div>
-              <motion.div
-                className="absolute inset-0 flex flex-col items-center justify-center w-full"
-                variants={contentVariants}
-                initial="hidden"
-                animate="visible"
+        {/* Embla container */}
+        <div className="flex h-[250px] sm:h-[350px] lg:h-[450px]">
+          {slides.map((item, index) => {
+            const firstImg = item.images?.[0];
+
+            const imageSrc = buildImageUrl(
+              firstImg?.image_url || firstImg?.image || null
+            );
+            return (
+              <div
+                key={item.id}
+                className="relative flex-[0_0_100%] min-w-0 h-full"
               >
-                {slide.content}
-              </motion.div>
-            </div>
-          ))}
+                {/* Background image */}
+                <div className="relative w-full h-full rounded-xl overflow-hidden">
+                  <Image
+                    src={imageSrc}
+                    alt={item.title || `Slide ${index + 1}`}
+                    className="w-full h-full object-cover"
+                    width={1280}
+                    height={600}
+                    sizes="(max-width: 640px) 95vw, (max-width: 1024px) 80vw, 75vw"
+                    priority={index === 0}
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-tr from-black/80 via-black/50 to-transparent" />
+                </div>
+
+                {/* Content overlay */}
+                <motion.div
+                  className="absolute inset-0 flex items-center justify-start"
+                  variants={contentVariants}
+                  initial="hidden"
+                  animate={selectedIndex === index ? "visible" : "hidden"}
+                >
+                  <div className="px-4 sm:px-6 lg:px-10 py-6 sm:py-8 max-w-[90%] sm:max-w-[70%]">
+                    <h1 className="text-xl sm:text-2xl lg:text-4xl font-extrabold text-white drop-shadow-lg leading-tight mb-2">
+                      {item.title}
+                    </h1>
+
+                    {item.description && (
+                      <p className="text-xs sm:text-sm lg:text-base text-white/90 font-medium drop-shadow-md mb-4 line-clamp-3">
+                        {item.description}
+                      </p>
+                    )}
+
+                    <motion.a
+                      href={`/content/${item.id}`}
+                      whileHover={{
+                        scale: 1.1,
+                        backgroundColor: "rgb(60,70,170)",
+                        color: "white",
+                        boxShadow: "0px 6px 14px rgba(0, 0, 0, 0.3)",
+                      }}
+                      whileTap={{ scale: 0.95 }}
+                      transition={{
+                        type: "spring",
+                        stiffness: 300,
+                        damping: 18,
+                      }}
+                      className="inline-block px-6 py-2 bg-[rgb(47,58,154)] text-[rgb(255,194,13)] font-semibold text-sm sm:text-base rounded-lg shadow-md"
+                    >
+                      Дэлгэрэнгүй
+                    </motion.a>
+                  </div>
+                </motion.div>
+              </div>
+            );
+          })}
         </div>
       </div>
 
@@ -197,7 +227,7 @@ const Banner = () => {
       <div className="max-w-[95%] sm:max-w-4xl lg:max-w-6xl mx-auto flex items-center justify-between mt-4 px-4">
         <div className="flex gap-2">
           <motion.button
-            className="bg-black/50 text-white p-2 rounded-full"
+            className="bg-black/60 text-white p-2 rounded-full"
             onClick={scrollPrev}
             variants={buttonVariants}
             whileHover="hover"
@@ -205,7 +235,7 @@ const Banner = () => {
             <ChevronLeft className="h-4 w-4 sm:h-5 sm:w-5" />
           </motion.button>
           <motion.button
-            className="bg-black/50 text-white p-2 rounded-full"
+            className="bg-black/60 text-white p-2 rounded-full"
             onClick={scrollNext}
             variants={buttonVariants}
             whileHover="hover"
@@ -213,14 +243,15 @@ const Banner = () => {
             <ChevronRight className="h-4 w-4 sm:h-5 sm:w-5" />
           </motion.button>
         </div>
+
         <div className="flex gap-2">
-          {slides.map((_, index) => (
+          {Array.from({ length: scrollSnapsCount }).map((_, index) => (
             <motion.button
               key={index}
               className={`w-2 h-2 sm:w-3 sm:h-3 rounded-full transition-all duration-300 ${
                 selectedIndex === index
                   ? "kosenBg scale-125"
-                  : "bg-gray-500 scale-100"
+                  : "bg-gray-500/70 scale-100"
               }`}
               onClick={() => scrollTo(index)}
               variants={dotVariants}
@@ -229,16 +260,6 @@ const Banner = () => {
           ))}
         </div>
       </div>
-
-      <style jsx>{`
-        .embla__slide {
-          opacity: 0;
-          transition: opacity 0.8s ease-in-out;
-        }
-        .embla__slide--is-selected {
-          opacity: 1;
-        }
-      `}</style>
     </motion.section>
   );
 };

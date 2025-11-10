@@ -74,3 +74,11 @@ export interface Video {
   video_file?: string;
   video_source?: string;
 }
+
+
+export interface Urls {
+  id: number;
+  title: string;
+  url: string;
+  order: number;
+}
