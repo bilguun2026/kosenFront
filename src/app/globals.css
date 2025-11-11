@@ -60,26 +60,31 @@ body {
 
 /* ===========================
    CKEditor-с ирсэн агуулга
+   (админ + фронт хоёуланд)
    =========================== */
 
-.ck-content {
+.ck-content,
+.rich-content {
   font-size: 1rem;
   line-height: 1.6;
   word-wrap: break-word;
 }
 
 /* Heading-ууд */
-.ck-content h1 {
+.ck-content h1,
+.rich-content h1 {
   font-size: 2em;
   margin: 0.67em 0;
 }
 
-.ck-content h2 {
+.ck-content h2,
+.rich-content h2 {
   font-size: 1.5em;
   margin: 0.75em 0;
 }
 
-.ck-content h3 {
+.ck-content h3,
+.rich-content h3 {
   font-size: 1.17em;
   margin: 0.83em 0;
 }
@@ -88,51 +93,62 @@ body {
 .ck-content p,
 .ck-content ul,
 .ck-content ol,
-.ck-content blockquote {
+.ck-content blockquote,
+.rich-content p,
+.rich-content ul,
+.rich-content ol,
+.rich-content blockquote {
   margin-top: 0.4rem;
   margin-bottom: 0.4rem;
 }
 
-/* 🔥 Жагсаалт – тоо / bullet-ээ дахин идэвхжүүлж байна */
-.ck-content ol {
+/* 🔥 Жагсаалт – тоо / bullet-ээ идэвхжүүлнэ */
+.ck-content ol,
+.rich-content ol {
   list-style: decimal !important;
   margin-left: 1.6rem;
   padding-left: 1.6rem;
 }
 
-.ck-content ul {
+.ck-content ul,
+.rich-content ul {
   list-style: disc !important;
   margin-left: 1.6rem;
   padding-left: 1.6rem;
 }
 
-/* Зурагтай figure – CKEditor 5 стильтэй ойролцоо */
-.ck-content figure.image {
+/* Зурагтай figure – CKEditor 5 style */
+.ck-content figure.image,
+.rich-content figure.image {
   display: table;
   clear: both;
   text-align: center;
   margin: 0.9em auto;
 }
 
-.ck-content figure.image > img {
+.ck-content figure.image > img,
+.rich-content figure.image > img {
   display: block;
   max-width: 100%;
   height: auto;
 }
 
 /* left / right align */
-.ck-content figure.image.image-style-align-left {
+.ck-content figure.image.image-style-align-left,
+.rich-content figure.image.image-style-align-left {
   float: left;
   margin-right: 1.5em;
 }
 
-.ck-content figure.image.image-style-align-right {
+.ck-content figure.image.image-style-align-right,
+.rich-content figure.image.image-style-align-right {
   float: right;
   margin-left: 1.5em;
 }
 
 /* Float-тай зурагны дараах текст wrapper-аас гарчихгүйн тулд */
-.ck-content::after {
+.ck-content::after,
+.rich-content::after {
   content: "";
   display: block;
   clear: both;

@@ -53,9 +53,7 @@ export default function ContentDetailPage() {
 
   if (isNaN(contentId)) {
     return (
-      <div className="text-red-600 text-center mt-12">
-        Invalid content ID.
-      </div>
+      <div className="text-red-600 text-center mt-12">Invalid content ID.</div>
     );
   }
 
@@ -147,7 +145,7 @@ export default function ContentDetailPage() {
               return (
                 <div
                   key={`text-${item.id}`}
-                  className="prose prose-sm sm:prose-base lg:prose-lg max-w-none text-gray-800 rich-content break-words whitespace-pre-wrap"
+                  className="prose prose-sm sm:prose-base lg:prose-lg max-w-none text-gray-800 rich-content"
                   dangerouslySetInnerHTML={{
                     __html: sanitizeHtml(item.text),
                   }}
@@ -175,7 +173,7 @@ export default function ContentDetailPage() {
                   {item.text && (
                     <div className="md:w-1/2 lg:w-7/12">
                       <div
-                        className="prose prose-sm sm:prose-base lg:prose-lg max-w-none text-gray-800 rich-content break-words whitespace-pre-wrap"
+                        className="prose prose-sm sm:prose-base lg:prose-lg max-w-none text-gray-800 rich-content"
                         dangerouslySetInnerHTML={{
                           __html: sanitizeHtml(item.text),
                         }}
