@@ -9,6 +9,7 @@ import {
   Content,
   Tag,
   ContentList,
+  ContentText,
   Video,
   Urls,
 } from "../types/api";
@@ -60,7 +61,7 @@ export const fetchContent = async (contentId: number): Promise<Content> => {
     const data = response.data;
 
     if (data.texts) {
-      data.texts = data.texts.map((t: any) => ({
+      data.texts = data.texts.map((t: ContentText) => ({
         ...t,
         text: fixMediaUrls(t.text),
       }));

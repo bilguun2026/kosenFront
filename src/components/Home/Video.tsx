@@ -1,5 +1,3 @@
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-
 import React from "react";
 import ReactPlayer from "react-player";
 
