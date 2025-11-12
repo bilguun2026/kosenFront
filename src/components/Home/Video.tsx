@@ -1,3 +1,5 @@
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+
 import React from "react";
 import ReactPlayer from "react-player";
 
@@ -13,7 +15,7 @@ const isExternalVideo = (url: string) => {
   return ReactPlayer.canPlay(url);
 };
 
-const VideoSection: React.FC<VideoProps> = ({ title, videoSource }) => {
+const VideoSection: React.FC<VideoProps> = ({ videoSource }) => {
   return (
     <div className="mb-8">
       <div className="relative w-full aspect-video rounded-2xl overflow-hidden shadow-md">

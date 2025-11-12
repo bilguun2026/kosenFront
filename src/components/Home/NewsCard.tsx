@@ -2,7 +2,6 @@
 
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
-import Image from "next/image";
 
 export interface NewsCardProps {
   id?: number;
@@ -22,8 +21,6 @@ const NewsCard: React.FC<NewsCardProps> = ({
   title,
   imageUrl,
   date,
-  tag,
-  category,
   description,
 }) => {
   const router = useRouter();

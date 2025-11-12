@@ -1,3 +1,5 @@
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+
 import { fixMediaUrls } from "@/utils/replaceMediaUrl";
 import axios, { AxiosInstance } from "axios";
 import {
@@ -56,9 +58,6 @@ export const fetchContent = async (contentId: number): Promise<Content> => {
   try {
     const response = await api.get(`contents/${contentId}/`);
     const data = response.data;
-
-    const mediaUrl =
-      process.env.NEXT_PUBLIC_MEDIA_URL || "http://localhost:8000";
 
     if (data.texts) {
       data.texts = data.texts.map((t: any) => ({

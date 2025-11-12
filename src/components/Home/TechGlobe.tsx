@@ -2,8 +2,6 @@
 
 import React, { useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import Image from "next/image";
-import Link from "next/link";
 
 interface TechGridProps {
   onRegisterClick: () => void;

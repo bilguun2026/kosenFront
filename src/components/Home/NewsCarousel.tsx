@@ -12,7 +12,6 @@ import NewsCard, { NewsCardProps } from "./NewsCard";
 import NewsCardSkeleton from "./newsCardSkeleton";
 
 // === Style Constants ===
-const MAIN_BLUE = "#2f3a9a";
 
 // === Variants ===
 const tagCardVariants = {
