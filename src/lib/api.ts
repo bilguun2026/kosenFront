@@ -1,5 +1,3 @@
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-
 import { fixMediaUrls } from "@/utils/replaceMediaUrl";
 import axios, { AxiosInstance } from "axios";
 import {

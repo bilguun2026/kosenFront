@@ -1,5 +1,3 @@
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-
 "use client";
 
 import React from "react";
@@ -13,18 +11,13 @@ const VideoIntroduction: React.FC = () => {
     data: videos = [],
     isLoading,
     error,
-  } = useQuery<Video[]>({
+  } = useQuery<Video[], Error>({
     queryKey: ["videos"],
     queryFn: fetchVideos,
   });
 
-  if (isLoading) {
-    return <p>Агуулга ачааллаж байна...</p>;
-  }
-
-  if (error) {
-    return <p>Алдаа гарлаа: {error.message}</p>;
-  }
+  if (isLoading) return <p>Агуулга ачааллаж байна...</p>;
+  if (error) return <p>Алдаа гарлаа: {error.message}</p>;
 
   return (
     <section className="relative z-40 bg-[#eeefff] py-16 px-4 sm:px-6 lg:px-12">
@@ -32,13 +25,16 @@ const VideoIntroduction: React.FC = () => {
         {/* Video Section */}
         <div className="relative w-full aspect-video rounded-2xl overflow-hidden shadow-md">
           {videos.length > 0 ? (
-            videos.map((video: any) => (
-              <VideoSection
-                key={video.id}
-                title={video.title}
-                videoSource={video.video_file || video.url}
-              />
-            ))
+            videos.map((video: Video) => {
+              const src = video.video_file || video.url || "";
+              return (
+                <VideoSection
+                  key={video.id}
+                  title={video.title}
+                  videoSource={src}
+                />
+              );
+            })
           ) : (
             <p>Видео оруулаагүй байна.</p>
           )}
@@ -56,25 +52,24 @@ const VideoIntroduction: React.FC = () => {
             болгоно.
           </p>
 
-          {/* Engineering Fields Grid */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
             <ul className="space-y-3">
               <li className="flex items-center">
-                <span className="w-3.5 h-3.5 bg-blue-600 rounded-full mr-3"></span>
+                <span className="w-3.5 h-3.5 bg-blue-600 rounded-full mr-3" />
                 Барилгын инженерчлэл
               </li>
               <li className="flex items-center">
-                <span className="w-3.5 h-3.5 bg-blue-600 rounded-full mr-3"></span>
+                <span className="w-3.5 h-3.5 bg-blue-600 rounded-full mr-3" />
                 Механик инженерчлэл
               </li>
             </ul>
             <ul className="space-y-3">
               <li className="flex items-center">
-                <span className="w-3.5 h-3.5 rounded-full mr-3 bg-[#ffc20c]"></span>
+                <span className="w-3.5 h-3.5 rounded-full mr-3 bg-[#ffc20c]" />
                 Мэдээллийн технологи
               </li>
               <li className="flex items-center">
-                <span className="w-3.5 h-3.5 rounded-full mr-3 bg-[#ffc20c]"></span>
+                <span className="w-3.5 h-3.5 rounded-full mr-3 bg-[#ffc20c]" />
                 Цахилгааны инженерчлэл
               </li>
             </ul>
