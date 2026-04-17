@@ -7,7 +7,6 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 import Image from "next/image";
 import DOMPurify from "dompurify";
-import { fixMediaUrls } from "@/utils/replaceMediaUrl";
 
 interface PageDetailProps {
   pageId: string;
@@ -43,21 +42,9 @@ export default function PageDetail({ pageId }: PageDetailProps) {
     );
   }
 
-  const MEDIA_BASE =
-    process.env.NEXT_PUBLIC_MEDIA_URL ?? "http://127.0.0.1:8000";
-
-  // banner-д ашиглах эхний контент, зураг
-  const firstContent = page.contents[0];
-  const firstImage = firstContent?.images[0];
-  const bannerUrl =
-    firstImage && firstImage.image_url
-      ? firstImage.image_url.startsWith("/media")
-        ? `${MEDIA_BASE}${firstImage.image_url}`
-        : firstImage.image_url
-      : undefined;
-
-  const sanitizeHTML = (html: string) =>
-    DOMPurify.sanitize(fixMediaUrls(html), {
+  // Sanitize HTML content to prevent XSS attacks
+  const sanitizeHTML = (html: string) => {
+    return DOMPurify.sanitize(html, {
       USE_PROFILES: { html: true },
       ALLOWED_TAGS: [
         "p",
@@ -87,16 +74,15 @@ export default function PageDetail({ pageId }: PageDetailProps) {
         "tbody",
         "thead",
         "tfoot",
-        "blockquote",
-        "code",
       ],
       ALLOWED_ATTR: ["href", "src", "alt", "class", "style"],
     });
+  };
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 bg-white">
       <motion.div
-        className="rounded-2xl shadow-xl p-10 border relative z-40 overflow-hidden"
+        className="rounded-2xl shadow-xl p-10 border relative z-40"
         style={{
           backgroundColor: "rgb(255,255,255)",
           borderColor: "rgb(47,58,154)",
@@ -106,45 +92,11 @@ export default function PageDetail({ pageId }: PageDetailProps) {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
       >
-        {/* BANNER ЗУРАГ + ГАРЧИГ / ТАЙЛБАР */}
-        {bannerUrl && (
-          <div className="-mx-10 -mt-10 mb-10 relative h-56 md:h-80">
-            <Image
-              src={bannerUrl}
-              alt={firstImage?.text || firstContent?.title || "Banner image"}
-              fill
-              className="object-cover"
-            />
-            {/* харанхуй градиент давхарга */}
-            <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/40 to-black/10" />
-            {/* гарчиг + тайлбар */}
-            <div className="absolute inset-0 flex flex-col justify-center px-10 md:px-16 lg:px-24 space-y-3">
-              <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold text-white drop-shadow">
-                {firstContent?.title || page.title}
-              </h1>
-              {(firstContent?.description ||
-                page.title ||
-                page.description) && (
-                <p className="max-w-2xl text-sm md:text-base text-gray-100/90 drop-shadow">
-                  {firstContent?.description || page.title || page.description}
-                </p>
-              )}
-            </div>
-          </div>
-        )}
-
         {page.contents.length > 0 ? (
           <div className="space-y-12">
             {page.contents.map((content) => {
-              const isBannerContent = content.id === firstContent?.id;
-
-              // banner-д ашигласан эхний зургийг доор дахин бүү харуул
-              const imagesForContent = isBannerContent
-                ? content.images.slice(1)
-                : content.images;
-
               const items = [
-                ...imagesForContent.map((img) => ({
+                ...content.images.map((img) => ({
                   type: "image" as const,
                   data: img,
                 })),
@@ -152,16 +104,18 @@ export default function PageDetail({ pageId }: PageDetailProps) {
                   type: "text" as const,
                   data: txt,
                 })),
-              ].sort((a, b) => a.data.order - b.data.order);
+              ];
+              items.sort((a, b) => a.data.order - b.data.order);
 
               return (
                 <section
                   key={content.id}
                   className="border-b border-[rgb(255,194,13)] last:border-none pb-10 last:pb-0"
                 >
-                  <div className="flex flex-row justify-between gap-4 mb-4">
+                  <div className="flex flex-row justify-between">
+                    <h2 className="text-2xl font-semibold">{content.title}</h2>
                     {content.tags.length > 0 && (
-                      <div className="mt-1 flex flex-wrap gap-2">
+                      <div className="mt-4 flex flex-wrap gap-2">
                         {content.tags.map((tag) => (
                           <Link
                             key={tag.id}
@@ -174,51 +128,45 @@ export default function PageDetail({ pageId }: PageDetailProps) {
                       </div>
                     )}
                   </div>
-
-                  <div className="mt-4 space-y-8">
+                  <div className="mt-6 space-y-6">
                     {items.map((item) => {
                       if (item.type === "image") {
                         const image = item.data;
-                        const imageUrl = image.image_url
-                          ? image.image_url.startsWith("/media")
-                            ? `${MEDIA_BASE}${image.image_url}`
-                            : image.image_url
-                          : undefined;
-
                         return (
-                          <div
-                            key={`image-${image.id}`}
-                            className="mt-2 mb-4 flex justify-center"
-                          >
-                            {imageUrl ? (
+                          <div key={`image-${image.id}`} className="mt-6">
+                            {image.image_url ? (
                               <Image
-                                src={imageUrl}
+                                src={image.image}
                                 alt={image.text || content.title}
                                 width={672}
                                 height={378}
-                                className="rounded-lg shadow-sm object-cover w-full max-w-3xl"
+                                className="rounded-lg shadow-sm object-cover w-full max-w-3xl mx-auto"
                               />
                             ) : (
-                              <div className="w-full max-w-3xl h-48 bg-gray-200 rounded-lg flex items-center justify-center">
+                              <div className="w-full max-w-3xl h-48 bg-gray-200 rounded-lg flex items-center justify-center mx-auto">
                                 <p className="text-gray-500">
                                   Image not available
                                 </p>
                               </div>
                             )}
+                            {image.text && (
+                              <p className="mt-2 text-sm italic text-center">
+                                {image.text}
+                              </p>
+                            )}
                           </div>
                         );
+                      } else {
+                        return (
+                          <div
+                            key={`text-${item.data.id}`}
+                            className="prose max-w-none"
+                            dangerouslySetInnerHTML={{
+                              __html: DOMPurify.sanitize(item.data.text),
+                            }}
+                          />
+                        );
                       }
-
-                      // TEXT BLOCK – CKEditor HTML
-                      return (
-                        <div
-                          key={`text-${item.data.id}`}
-                          className="rich-content ck-content max-w-none"
-                          dangerouslySetInnerHTML={{
-                            __html: sanitizeHTML(item.data.text),
-                          }}
-                        />
-                      );
                     })}
                   </div>
                 </section>

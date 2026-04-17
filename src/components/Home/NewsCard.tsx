@@ -1,9 +1,8 @@
-/* eslint-disable @next/next/no-img-element */
 "use client";
 
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
-import { buildImageUrl } from "@/utils/buildImageUrl";
+import Image from "next/image";
 
 export interface NewsCardProps {
   id?: number;
@@ -23,6 +22,8 @@ const NewsCard: React.FC<NewsCardProps> = ({
   title,
   imageUrl,
   date,
+  tag,
+  category,
   description,
 }) => {
   const router = useRouter();
@@ -45,7 +46,11 @@ const NewsCard: React.FC<NewsCardProps> = ({
         {/* Image (65%) */}
         <div className="relative h-[65%] w-full overflow-hidden">
           <img
-            src={buildImageUrl(imageUrl)}
+            src={
+              imageUrl.startsWith("/media")
+                ? `http://localhost:8000/${imageUrl}`
+                : imageUrl
+            }
             alt={title}
             onError={(e) => {
               e.currentTarget.onerror = null;

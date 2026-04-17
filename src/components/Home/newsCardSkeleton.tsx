@@ -3,6 +3,7 @@
 import { motion } from "framer-motion";
 
 const MAIN_BLUE = "#2f3a9a";
+const DARK_BLUE = "#223175";
 
 const NewsCardSkeleton: React.FC = () => {
   return (

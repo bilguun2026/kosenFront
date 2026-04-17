@@ -1,4 +1,4 @@
-import { FaFacebook, FaInstagram, FaYoutube } from "react-icons/fa";
+import { FaFacebook } from "react-icons/fa";
 
 const Footer: React.FC = () => {
   const navItems = [
@@ -11,27 +11,6 @@ const Footer: React.FC = () => {
     phone: "(976)-77110096, (976)-77110097",
     email: "must-kosen@must.edu.mn",
   };
-
-  const governmentLinks = [
-    {
-      label: "ШИЛЭН ДАНСНЫ МЭДЭЭЛЭЛ",
-      subtitle: "",
-      href: "https://shilendans.gov.mn/organization/54259?ry=2026&group=5",
-      logo: "/images/suld.png",
-    },
-    {
-      label: "АВИЛГАТАЙ ТЭМЦЭХ ГАЗАР",
-      subtitle: "ШУДАРГА НИЙГМИЙН ТӨЛӨӨ ХАМТДАА",
-      href: "https://www.iaac.mn/",
-      logo: "/images/atg.png",
-    },
-    {
-      label: "ХӨРӨНГӨ, ОРЛОГЫН МЭДҮҮЛЭГ",
-      subtitle: "ХУВИЙН АШИГ СОНИРХОЛЫН МЭДҮҮЛЭГ",
-      href: "https://meduuleg.iaac.mn/AOS/Login",
-      logo: "/images/atg.png",
-    },
-  ];
 
   return (
     <footer className="bg-gradient-to-r from-[#2f3a9a] via-[#223175] to-[#2f3a9a] text-white py-12 relative z-30 shadow-lg">
@@ -103,59 +82,12 @@ const Footer: React.FC = () => {
               >
                 <FaFacebook className="text-2xl" />
               </a>
-              <a
-                href="https://www.instagram.com/must_kosen"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-gray-300 hover:text-[var(--color-accent)] transition-colors duration-300 transform hover:scale-110"
-              >
-                <FaInstagram className="text-2xl" />
-              </a>
-              <a
-                href="https://www.youtube.com/@mustkosen"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-gray-300 hover:text-[var(--color-accent)] transition-colors duration-300 transform hover:scale-110"
-              >
-                <FaYoutube className="text-2xl" />
-              </a>
             </div>
           </div>
         </div>
 
-        {/* Government Required Links */}
-        <div className="mt-8 pt-6 border-t border-[rgba(255,194,12,0.3)]">
-          <div className="bg-[#ffc20c] rounded-xl p-6 flex flex-col sm:flex-row justify-center gap-6 sm:gap-10">
-            {governmentLinks.map((link, index) => (
-              <a
-                key={index}
-                href={link.href}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center gap-3 hover:opacity-80 transition-opacity duration-300"
-              >
-                <img
-                  src={link.logo}
-                  alt={link.label}
-                  className="w-12 h-12 object-contain rounded-full"
-                />
-                <div>
-                  <p className="text-[#2f3a9a] font-bold text-sm leading-tight">
-                    {link.label}
-                  </p>
-                  {link.subtitle && (
-                    <p className="text-[#2f3a9a] text-xs leading-tight">
-                      {link.subtitle}
-                    </p>
-                  )}
-                </div>
-              </a>
-            ))}
-          </div>
-        </div>
-
         {/* Divider & Copyright */}
-        <div className="mt-6 pt-6 border-t border-[rgba(255,194,12,0.3)] text-center text-gray-400 text-sm">
+        <div className="mt-10 pt-6 border-t border-[rgba(255,194,12,0.3)] text-center text-gray-400 text-sm">
           <p>
             © {new Date().getFullYear()} ШУТИС KOSEN. Бүх эрх хуулиар
             хамгаалагдсан.

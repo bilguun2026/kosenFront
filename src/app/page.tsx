@@ -1,45 +1,49 @@
 "use client";
 
+import {
+  FaGraduationCap,
+  FaChalkboardTeacher,
+  FaUniversity,
+} from "react-icons/fa";
+import { IconType } from "react-icons";
 import Card from "@/components/Home/Card";
 import VideoIntroduction from "@/components/Home/VideoIntro";
 import NewsCarousel from "@/components/Home/NewsCarousel";
+import RegistrationForm from "@/components/Home/registration";
 import TechGlobe from "@/components/Home/TechGlobe";
+import { useState } from "react";
 import { motion } from "framer-motion";
 import Banner from "@/components/Home/Banner";
-import { useQuery } from "@tanstack/react-query";
-import { fetchInfoCards } from "@/lib/api";
-import { InfoCard } from "@/types/api";
 
-const defaultCards = [
-  {
-    icon: "graduation",
-    title: "БИДНИЙ ТУХАЙ",
-    description:
-      "Манай сургууль шинжлэх ухаан, технологийн урам зоригтой хамт олныг бэлтгэдэг.",
-  },
-  {
-    icon: "teacher",
-    title: "БИДНИЙ УРИА",
-    description:
-      "Багш, төстэй хамт олныг нэгтгэн, шинэлэг боловсролын зарчимыг дэмждэг.",
-  },
-  {
-    icon: "university",
-    title: "БИДНИЙ ЗОРИЛГО",
-    description:
-      "Оюутны амжилтыг дээд зэргээр дэмжиж, ирээдүйд шинэ эринд бэлтгэх зорилготой.",
-  },
-];
+interface CardData {
+  icon: IconType;
+  title: string;
+  description: string;
+}
 
 export default function Home() {
-  const { data: apiCards } = useQuery<InfoCard[]>({
-    queryKey: ["infoCards"],
-    queryFn: fetchInfoCards,
-  });
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const cards = apiCards && apiCards.length > 0
-    ? apiCards.map((c) => ({ icon: c.icon, title: c.title, description: c.description }))
-    : defaultCards;
+  const cards: CardData[] = [
+    {
+      icon: FaGraduationCap,
+      title: "БИДНИЙ ТУХАЙ",
+      description:
+        "Манай сургууль шинжлэх ухаан, технологийн урам зоригтой хамт олныг бэлтгэдэг.",
+    },
+    {
+      icon: FaChalkboardTeacher,
+      title: "БИДНИЙ УРИА",
+      description:
+        "Багш, төстэй хамт олныг нэгтгэн, шинэлэг боловсролын зарчимыг дэмждэг.",
+    },
+    {
+      icon: FaUniversity,
+      title: "БИДНИЙ ЗОРИЛГО",
+      description:
+        "Оюутны амжилтыг дээд зэргээр дэмжиж, ирээдүйд шинэ эринд бэлтгэх зорилготой.",
+    },
+  ];
 
   const sectionVariants = {
     hidden: { opacity: 0, y: 20 },
@@ -71,7 +75,12 @@ export default function Home() {
 
       <VideoIntroduction />
       <NewsCarousel />
-      <TechGlobe />
+      <TechGlobe onRegisterClick={() => setIsModalOpen(true)} />
+
+      {/* Registration Modal */}
+      {isModalOpen && (
+        <RegistrationForm onClose={() => setIsModalOpen(false)} />
+      )}
     </div>
   );
 }
