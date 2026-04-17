@@ -44,7 +44,7 @@ export const fetchPage = async (id: string): Promise<Page> => {
 export const fetchContents = async (slug: string): Promise<ContentList[]> => {
   try {
     const response = await api.get<PaginatedResponse<ContentList>>(
-      `/contents/?tag=${slug}`
+      `contents/?tag=${slug}`
     );
     return response.data.results;
   } catch (error) {
