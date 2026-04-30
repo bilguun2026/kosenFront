@@ -6,7 +6,7 @@ import { fetchContent } from "@/lib/api";
 import { Content, ContentImage, ContentText } from "@/types/api";
 import Image from "next/image";
 import Link from "next/link";
-import { useMemo, useState, useEffect } from "react";
+import { useMemo } from "react";
 import DOMPurify from "dompurify";
 import { fixMediaUrls } from "@/utils/replaceMediaUrl";
 import { FaFacebook } from "react-icons/fa";
@@ -41,11 +41,9 @@ function mergeAndSortContent(
 export default function ContentDetailPage() {
   const { id } = useParams<{ id: string }>();
   const contentId = useMemo(() => Number(id), [id]);
-  const [shareUrl, setShareUrl] = useState("");
-
-  useEffect(() => {
-    setShareUrl(window.location.href);
-  }, []);
+  const SITE_URL =
+    process.env.NEXT_PUBLIC_SITE_URL ?? (typeof window !== "undefined" ? window.location.origin : "");
+  const shareUrl = `${SITE_URL}/content/${id}`;
 
   const {
     data: content,

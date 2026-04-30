@@ -5,6 +5,8 @@ const API_URL =
   process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000/api";
 const MEDIA_URL =
   process.env.NEXT_PUBLIC_MEDIA_URL ?? "http://localhost:8000";
+const SITE_URL =
+  process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
 
 type Props = { params: Promise<{ id: string }> };
 
@@ -21,6 +23,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     const imageUrl = firstImage?.image_url
       ? `${MEDIA_URL}${firstImage.image_url}`
       : undefined;
+    const pageUrl = `${SITE_URL}/content/${id}`;
 
     return {
       title: content.title ? `${content.title} | MUST KOOSEN` : "MUST KOOSEN",
@@ -28,6 +31,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       openGraph: {
         title: content.title,
         description: content.description ?? undefined,
+        url: pageUrl,
         images: imageUrl ? [{ url: imageUrl, width: 1200, height: 630 }] : [],
         type: "article",
       },
