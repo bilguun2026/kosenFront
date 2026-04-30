@@ -3,6 +3,7 @@
 
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
+import { buildImageUrl } from "@/utils/buildImageUrl";
 
 export interface NewsCardProps {
   id?: number;
@@ -44,11 +45,7 @@ const NewsCard: React.FC<NewsCardProps> = ({
         {/* Image (65%) */}
         <div className="relative h-[65%] w-full overflow-hidden">
           <img
-            src={
-              imageUrl.startsWith("/media")
-                ? `http://localhost:8000/${imageUrl}`
-                : imageUrl
-            }
+            src={buildImageUrl(imageUrl)}
             alt={title}
             onError={(e) => {
               e.currentTarget.onerror = null;

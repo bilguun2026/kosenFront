@@ -7,13 +7,19 @@ const nextConfig: NextConfig = {
     remotePatterns: [
       {
         protocol: "http",
+        hostname: "localhost",
+        port: "8000",
+        pathname: "/media/**",
+      },
+      {
+        protocol: "http",
         hostname: "127.0.0.1",
         port: "8000",
         pathname: "/media/**",
       },
       {
         protocol: "http",
-        hostname: "202.70.34.58", // серверийн чинь IP бол энд
+        hostname: "202.70.34.58",
         port: "8000",
         pathname: "/media/**",
       },

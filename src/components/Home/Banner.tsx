@@ -7,14 +7,7 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 import useEmblaCarousel from "embla-carousel-react";
 import { useQuery } from "@tanstack/react-query";
 import { fetchCarouselContent } from "@/lib/api";
-const API_BASE_URL = process.env.NEXT_PUBLIC_MEDIA_URL?.replace(/\/$/, "") || "";
-
-function buildImageUrl(path?: string | null): string {
-  if (!path) return "/images/banner.jpg"; // fallback local image
-  if (path.startsWith("http")) return path; // already full URL
-  // If backend returns `/media/...`, prepend API base
-  return `${API_BASE_URL}${path}`;
-}
+import { buildImageUrl } from "@/utils/buildImageUrl";
 interface CarouselImage {
   id: number;
   image: string;
