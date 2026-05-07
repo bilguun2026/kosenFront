@@ -20,7 +20,30 @@ function sanitizeHtml(html?: string | null): string {
   if (!html) return "";
   const fixed = fixMediaUrls(html);
   if (typeof window === "undefined") return fixed;
-  return DOMPurify.sanitize(fixed);
+  const clean = DOMPurify.sanitize(fixed, {
+    ADD_TAGS: ["iframe"],
+    ADD_ATTR: ["target", "rel", "download", "allowfullscreen", "frameborder", "src", "allow"],
+  });
+  return addPdfEmbeds(clean);
+}
+
+function addPdfEmbeds(html: string): string {
+  if (typeof window === "undefined") return html;
+  const div = document.createElement("div");
+  div.innerHTML = html;
+  const pdfLinks = div.querySelectorAll('a[href$=".pdf"]');
+  pdfLinks.forEach((link) => {
+    const href = link.getAttribute("href");
+    if (!href) return;
+    link.setAttribute("target", "_blank");
+    link.setAttribute("rel", "noopener noreferrer");
+    const embed = document.createElement("iframe");
+    embed.src = href;
+    embed.className = "pdf-embed";
+    embed.setAttribute("title", link.textContent || "PDF");
+    link.parentNode?.insertBefore(embed, link.nextSibling);
+  });
+  return div.innerHTML;
 }
 
 function mergeAndSortContent(

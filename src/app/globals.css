@@ -5,7 +5,7 @@
   --foreground: #171717;
   --kosenBg1: #2f3a9a;
   --kosenBg2: #ffc20c;
-  --kosenText1: #07158f; /* Dark Blue */
+  --kosenText1: #07158f;
   --kosenText2: #ffc20c;
 }
 
@@ -29,6 +29,7 @@ body {
   font-family: Arial, Helvetica, sans-serif;
 }
 
+/* Kosen өнгө, class-ууд */
 .kosenText1 {
   @apply text-[#2f3a9a];
 }
@@ -44,6 +45,7 @@ body {
 .kosenBg1 {
   @apply bg-[#2f3a9a];
 }
+
 .kosenBg2 {
   @apply bg-[#ffc20c];
 }
@@ -56,8 +58,188 @@ body {
   @apply rounded;
 }
 
-ul {
-  list-style: none !important;
-  margin: 0 !important;
-  padding: 0 !important;
+/* ===========================
+   CKEditor-с ирсэн агуулга
+   (админ + фронт хоёуланд)
+   =========================== */
+
+.ck-content,
+.rich-content {
+  font-size: 1rem;
+  line-height: 1.6;
+  word-wrap: break-word;
+}
+
+/* Heading-ууд */
+.ck-content h1,
+.rich-content h1 {
+  font-size: 2em;
+  margin: 0.67em 0;
+}
+
+.ck-content h2,
+.rich-content h2 {
+  font-size: 1.5em;
+  margin: 0.75em 0;
+}
+
+.ck-content h3,
+.rich-content h3 {
+  font-size: 1.17em;
+  margin: 0.83em 0;
+}
+
+/* Paragraph, list, blockquote хоорондын зай */
+.ck-content p,
+.ck-content ul,
+.ck-content ol,
+.ck-content blockquote,
+.rich-content p,
+.rich-content ul,
+.rich-content ol,
+.rich-content blockquote {
+  margin-top: 0.4rem;
+  margin-bottom: 0.4rem;
+}
+
+/* 🔥 Жагсаалт – тоо / bullet-ээ идэвхжүүлнэ */
+.ck-content ol,
+.rich-content ol {
+  list-style: decimal !important;
+  margin-left: 1.6rem;
+  padding-left: 1.6rem;
+}
+
+.ck-content ul,
+.rich-content ul {
+  list-style: disc !important;
+  margin-left: 1.6rem;
+  padding-left: 1.6rem;
+}
+
+/* Зурагтай figure – CKEditor 5 style */
+.ck-content figure.image,
+.rich-content figure.image {
+  display: table;
+  clear: both;
+  text-align: center;
+  margin: 0.9em auto;
+}
+
+.ck-content figure.image > img,
+.rich-content figure.image > img {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+
+/* left / right align */
+.ck-content figure.image.image-style-align-left,
+.rich-content figure.image.image-style-align-left {
+  float: left;
+  margin-right: 1.5em;
+}
+
+.ck-content figure.image.image-style-align-right,
+.rich-content figure.image.image-style-align-right {
+  float: right;
+  margin-left: 1.5em;
+}
+
+/* Float-тай зурагны дараах текст wrapper-аас гарчихгүйн тулд */
+.ck-content::after,
+.rich-content::after {
+  content: "";
+  display: block;
+  clear: both;
+}
+
+/* -------- FILE / PDF embed -------- */
+
+.ck-content a[href$=".pdf"],
+.ck-content a[href$=".doc"],
+.ck-content a[href$=".docx"],
+.ck-content a[href$=".xls"],
+.ck-content a[href$=".xlsx"],
+.rich-content a[href$=".pdf"],
+.rich-content a[href$=".doc"],
+.rich-content a[href$=".docx"],
+.rich-content a[href$=".xls"],
+.rich-content a[href$=".xlsx"] {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.3rem 0.8rem;
+  background: #f0f4ff;
+  border: 1px solid #2f3a9a;
+  border-radius: 6px;
+  color: #2f3a9a;
+  font-weight: 600;
+  text-decoration: none;
+  transition: background 0.2s;
+}
+
+.ck-content a[href$=".pdf"]:hover,
+.ck-content a[href$=".doc"]:hover,
+.ck-content a[href$=".docx"]:hover,
+.rich-content a[href$=".pdf"]:hover,
+.rich-content a[href$=".doc"]:hover,
+.rich-content a[href$=".docx"]:hover {
+  background: #2f3a9a;
+  color: #fff;
+}
+
+.ck-content a[href$=".pdf"]::before,
+.rich-content a[href$=".pdf"]::before {
+  content: "📄";
+}
+
+.ck-content a[href$=".doc"]::before,
+.ck-content a[href$=".docx"]::before,
+.rich-content a[href$=".doc"]::before,
+.rich-content a[href$=".docx"]::before {
+  content: "📝";
+}
+
+.ck-content a[href$=".xls"]::before,
+.ck-content a[href$=".xlsx"]::before,
+.rich-content a[href$=".xls"]::before,
+.rich-content a[href$=".xlsx"]::before {
+  content: "📊";
+}
+
+.ck-content iframe,
+.rich-content iframe {
+  max-width: 100%;
+  border: 1px solid #d0d0d0;
+  border-radius: 8px;
+  margin: 0.75rem 0;
+}
+
+.rich-content .pdf-embed {
+  width: 100%;
+  height: 80vh;
+  min-height: 500px;
+  border: 1px solid #d0d0d0;
+  border-radius: 8px;
+}
+
+/* -------- TABLE style -------- */
+
+.rich-content table {
+  border-collapse: collapse;
+  border: 1px solid #d0d0d0;
+  margin: 0.75rem 0;
+}
+
+.rich-content th,
+.rich-content td {
+  border: 1px solid #d0d0d0;
+  padding: 0.4rem 0.8rem;
+  text-align: left;
+}
+
+.rich-content th {
+  background-color: #f5f5f5;
+  font-weight: 600;
 }
