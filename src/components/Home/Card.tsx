@@ -1,13 +1,32 @@
 import { motion } from "framer-motion";
 import { IconType } from "react-icons";
+import {
+  FaGraduationCap,
+  FaChalkboardTeacher,
+  FaUniversity,
+  FaBook,
+  FaStar,
+  FaGlobeAmericas,
+} from "react-icons/fa";
+
+const iconMap: Record<string, IconType> = {
+  graduation: FaGraduationCap,
+  teacher: FaChalkboardTeacher,
+  university: FaUniversity,
+  book: FaBook,
+  star: FaStar,
+  globe: FaGlobeAmericas,
+};
 
 interface CardProps {
-  icon: IconType;
+  icon: IconType | string;
   title: string;
   description: string;
 }
 
-const Card: React.FC<CardProps> = ({ icon: Icon, title, description }) => {
+const Card: React.FC<CardProps> = ({ icon, title, description }) => {
+  const Icon = typeof icon === "string" ? iconMap[icon] || FaGraduationCap : icon;
+
   const cardVariants = {
     hidden: { opacity: 0, y: 50 },
     visible: {

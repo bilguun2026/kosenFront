@@ -82,3 +82,11 @@ export interface Urls {
   url: string;
   order: number;
 }
+
+export interface InfoCard {
+  id: number;
+  title: string;
+  description: string;
+  icon: string;
+  order: number;
+}

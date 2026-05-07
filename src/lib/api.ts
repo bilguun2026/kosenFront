@@ -10,6 +10,7 @@ import {
   ContentText,
   Video,
   Urls,
+  InfoCard,
 } from "../types/api";
 
 const api: AxiosInstance = axios.create({
@@ -108,6 +109,16 @@ export const fetchUrls = async (): Promise<Urls[]> => {
     return response.data.results || [];
   } catch (error) {
     console.error("Error fetching urls:", error);
+    return [];
+  }
+};
+
+export const fetchInfoCards = async (): Promise<InfoCard[]> => {
+  try {
+    const response = await api.get<PaginatedResponse<InfoCard>>("info-cards/");
+    return response.data.results || [];
+  } catch (error) {
+    console.error("Error fetching info cards:", error);
     return [];
   }
 };
