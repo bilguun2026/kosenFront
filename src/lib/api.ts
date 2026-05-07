@@ -1,3 +1,4 @@
+import { fixMediaUrls } from "@/utils/replaceMediaUrl";
 import axios, { AxiosInstance } from "axios";
 import {
   PageNavigation,
@@ -6,14 +7,16 @@ import {
   Content,
   Tag,
   ContentList,
+  ContentText,
   Video,
+  Urls,
+  InfoCard,
 } from "../types/api";
 
 const api: AxiosInstance = axios.create({
   baseURL: process.env.NEXT_PUBLIC_API_URL,
   headers: {
     "Content-Type": "application/json",
-    // Authorization: "Basic " + btoa("admin:bilguunad1026"),
   },
 });
 
@@ -54,7 +57,16 @@ export const fetchContents = async (slug: string): Promise<ContentList[]> => {
 export const fetchContent = async (contentId: number): Promise<Content> => {
   try {
     const response = await api.get(`contents/${contentId}/`);
-    return response.data;
+    const data = response.data;
+
+    if (data.texts) {
+      data.texts = data.texts.map((t: ContentText) => ({
+        ...t,
+        text: fixMediaUrls(t.text),
+      }));
+    }
+
+    return data;
   } catch (error) {
     console.error("Error fetching content:", error);
     throw error;
@@ -76,11 +88,10 @@ export const fetchCarouselContent = async (): Promise<Content[]> => {
     const response = await api.get(`carousel/`);
     return response.data.results || [];
   } catch (error) {
-    console.error("Error fetching carousel:", error);
+    console.error("Error fetching tag:", error);
     throw error;
   }
 };
-
 
 export const fetchVideos = async (): Promise<Video[]> => {
   try {
@@ -90,4 +101,24 @@ export const fetchVideos = async (): Promise<Video[]> => {
     console.error("Error fetching videos:", error);
     return [];
   }
-}
+};
+
+export const fetchUrls = async (): Promise<Urls[]> => {
+  try {
+    const response = await api.get<PaginatedResponse<Urls>>("urls/");
+    return response.data.results || [];
+  } catch (error) {
+    console.error("Error fetching urls:", error);
+    return [];
+  }
+};
+
+export const fetchInfoCards = async (): Promise<InfoCard[]> => {
+  try {
+    const response = await api.get<PaginatedResponse<InfoCard>>("info-cards/");
+    return response.data.results || [];
+  } catch (error) {
+    console.error("Error fetching info cards:", error);
+    return [];
+  }
+};

@@ -50,6 +50,7 @@ export interface Page {
   id: string;
   title: string;
   subtitle: string;
+  description: string;
   slug: string;
   template: string;
   template_display: string;
@@ -73,4 +74,19 @@ export interface Video {
   url: string;
   video_file?: string;
   video_source?: string;
+}
+
+export interface Urls {
+  id: number;
+  title: string;
+  url: string;
+  order: number;
+}
+
+export interface InfoCard {
+  id: number;
+  title: string;
+  description: string;
+  icon: string;
+  order: number;
 }

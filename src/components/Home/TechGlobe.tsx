@@ -2,14 +2,8 @@
 
 import React, { useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import Image from "next/image";
-import Link from "next/link";
 
-interface TechGridProps {
-  onRegisterClick: () => void;
-}
-
-const TechGrid: React.FC<TechGridProps> = ({ onRegisterClick }) => {
+const TechGrid: React.FC = () => {
   const mountRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -29,7 +23,7 @@ const TechGrid: React.FC<TechGridProps> = ({ onRegisterClick }) => {
       clearTimeout(timeout);
       window.removeEventListener("resize", handleResize);
     };
-  }, [onRegisterClick]);
+  }, []);
 
   return (
     <section
@@ -107,9 +101,11 @@ const TechGrid: React.FC<TechGridProps> = ({ onRegisterClick }) => {
             </div>
           ))}
         </motion.div>
-        <motion.button
-          onClick={onRegisterClick}
-          className="mt-6 sm:mt-8 bg-[rgb(255,194,13)] text-[rgb(47,58,154)] font-semibold px-6 sm:px-8 py-2 sm:py-3 rounded-full shadow-lg hover:brightness-110 transition-all duration-300 text-sm sm:text-base"
+        <motion.a
+          href="https://elselt.edu.mn/"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="mt-6 sm:mt-8 inline-block bg-[rgb(255,194,13)] text-[rgb(47,58,154)] font-semibold px-6 sm:px-8 py-2 sm:py-3 rounded-full shadow-lg hover:brightness-110 transition-all duration-300 text-sm sm:text-base"
           initial={{ opacity: 0, scale: 0.8 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.5, delay: 0.6 }}
@@ -117,7 +113,7 @@ const TechGrid: React.FC<TechGridProps> = ({ onRegisterClick }) => {
           whileTap={{ scale: 0.95 }}
         >
           Одоо бүртгүүл
-        </motion.button>
+        </motion.a>
       </div>
     </section>
   );

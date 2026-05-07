@@ -72,7 +72,6 @@ export default function HeaderWithData({ className }: HeaderWithDataProps) {
       title='ШИНЖЛЭХ УХААН ТЕХНОЛОГИЙН ИХ СУРГУУЛЬ'
       subtitle='КООСЭН ТК'
       navItems={navItems}
-      onLanguageChange={() => alert('Language change not implemented')}
     />
   );
 }

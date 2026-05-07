@@ -4,7 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
-import { ChevronDown, Menu, X, Phone, Globe, Home } from "lucide-react";
+import { ChevronDown, Menu, X, Phone, Home } from "lucide-react";
 import ImportantLinksSidebar from "../Home/ImportantLinksSidebar";
 
 export interface DropdownItem {
@@ -25,13 +25,11 @@ export interface HeaderProps {
   title: string;
   subtitle: string;
   navItems: NavItem[];
-  onLanguageChange: () => void;
   className?: string;
 }
 
 const Header: React.FC<HeaderProps> = ({
   navItems,
-  onLanguageChange,
   className,
 }) => {
   const [hoveredNav, setHoveredNav] = useState<string | null>(null);
@@ -118,15 +116,6 @@ const Header: React.FC<HeaderProps> = ({
               Чухал холбоос
             </motion.button>
 
-            <motion.button
-              onClick={onLanguageChange}
-              className="text-gray-700 hover:text-[#07158F] font-medium flex items-center space-x-1 bg-white px-3 py-1.5 rounded-full border border-gray-300 hover:border-[#ffc20c] transition-all duration-300 text-sm"
-              whileHover={{ scale: 1.05 }}
-              transition={{ duration: 0.2 }}
-            >
-              <Globe className="h-4 w-4" />
-              <ChevronDown className="h-4 w-4" />
-            </motion.button>
             <motion.div
               className="relative group text-gray-700 hover:text-[#07158F] font-medium flex items-center bg-white px-3 py-1.5 rounded-full border border-gray-300 hover:border-[#ffc20c] transition-all duration-300 text-sm"
               whileHover={{ scale: 1.05 }}
